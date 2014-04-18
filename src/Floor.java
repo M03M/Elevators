@@ -57,68 +57,63 @@ public class Floor
 	//Return's the status of the 'up' button
 	public boolean getUpRequest(){return upRequest;}
 	
-	//Return's the floor number
-	public int getFloorNumber(){return floorNumber;}
-	
-	//Return's a list of the people waiting on this floor
-	public ArrayList<Person> getPeople(){return people;}
-	
 	//Returns the people that enter an elevator given it's direction and availability, and removes them from the floor
-	public ArrayList<Person> removePassengers(boolean ascending, int availability)
+	public ArrayList<Person> removePassengers(int dir, int availability, Elevator elev)
 	{
 		//List of people who exit the floor
 		ArrayList<Person> toReturn = new ArrayList<Person>();
 		
+		//Doesnt have a real direction
+		if (elev.getPassenger().size() == 0) {
+			if (people.size() > 0) {
+				elev.setDirection((int) Math.signum(people.get(0).getDestination() - floorNumber));
+			}
+		}
+
 		//Loop through all of the people on the floor and find those that are exiting
 		for(int i = 0; i < people.size(); i++)
 		{
 			//If the person is going in the direction of the elevator
-			if((people.get(i).getDestination() > floorNumber) == ascending && toReturn.size() < availability)
+			if(Math.signum(people.get(i).getDestination() - floorNumber) == dir && toReturn.size() < availability)
 			{
-				//Add the person to the list of people entering the elevator
-				toReturn.add(people.get(i));
-				
-				//Remove the person from the floor
-				people.remove(i);
-				
+				//Add the person to the list of people entering the elevator and remove them
+				toReturn.add(people.remove(i));
+
 				i--;
 			}
 		}
-		
-		//Turn off the up/down request button if all passengers moving in that direction borded and
-		//add a null object to the end of the list of borders if not all passengers going in that
-		//direction boarded, so that the master controller can be notified that the floor needs to
-		//be dispatched to again.
-		if(ascending)
+
+		//Turn off the up/down request button if all passengers moving in that direction boarded
+		if(dir == 1)
 		{
 			boolean upRequest = false;
-			
+
 			for(int i = 0; i < people.size(); i++)
 			{
 				if(people.get(i).getDestination() > floorNumber)
 					upRequest = true;
 			}
-			
+
 			this.upRequest = upRequest;
-			
-			if(upRequest)
-				toReturn.add(null);
 		}else
 		{
 			boolean downRequest = false;
-			
+
 			for(int i = 0; i < people.size(); i++)
 			{
 				if(people.get(i).getDestination() < floorNumber)
 					downRequest = true;
 			}
-			
+
 			this.downRequest = downRequest;
-			
-			if(downRequest)
-				toReturn.add(null);
 		}
-		
+
 		return toReturn;
 	}
+	
+	//Return's the floor number
+	public int getFloorNumber(){return floorNumber;}
+	
+	//Return's a list of the people waiting on this floor
+	public ArrayList<Person> getPeople(){return people;}
 }
