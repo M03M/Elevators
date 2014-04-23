@@ -1,0 +1,12 @@
+import java.awt.Color;
+
+import javax.swing.JPanel;
+
+
+public class InputPanel extends JPanel
+{
+	public InputPanel()
+	{
+		this.setBackground(new Color(90,50,200));
+	}
+}

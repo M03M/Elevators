@@ -1,0 +1,23 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+
+import javax.swing.JPanel;
+
+
+public class ElevatorPanel extends JPanel
+{
+	private final int WIDTH  = (int)(GUI.WIDTH*0.75);
+	private final int HEIGHT = (int)(GUI.HEIGHT*0.1);
+	
+	public ElevatorPanel()
+	{
+
+		this.setBackground(new Color(0,255,0));
+		this.setPreferredSize(new Dimension(this.WIDTH,this.HEIGHT));
+		
+		this.setLayout(new GridLayout(1, GUI.numElevators));
+	}
+	
+	
+}

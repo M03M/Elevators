@@ -151,7 +151,8 @@ public class Runner {
 				curDistance = Math.abs(floor - elevatorFloor);
 			}
 			
-			if (curDistance < distance) {
+			// MODIFICATION: < became <= in order to fix a null pointer
+			if (curDistance <= distance) {
 				distance = curDistance;
 				closest = curElevator;
 			}
@@ -205,5 +206,16 @@ public class Runner {
 		}
 		
 		return floorRequests;
+	}
+	
+	//TEMPORARY
+	public List <Elevator> getElevatorList()
+	{
+		return elevatorList;
+	}
+	// TEMPORARY
+	public List<Floor> getFloorList()
+	{
+		return floorList;
 	}
 }

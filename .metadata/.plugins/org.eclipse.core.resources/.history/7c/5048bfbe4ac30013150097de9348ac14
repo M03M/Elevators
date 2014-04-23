@@ -1,0 +1,30 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.JPanel;
+
+
+public class DisplayPanel extends JPanel
+{
+	private final int WIDTH  = (int)(GUI.WIDTH*0.75);
+	private final int HEIGHT = (int)(GUI.HEIGHT*0.6);
+	
+	public DisplayPanel()
+	{
+		this.setBackground(new Color(255,0,0));
+		this.setPreferredSize(new Dimension(this.WIDTH,this.HEIGHT));
+	}
+	
+	public void paint(Graphics g)
+	{
+		// Painting background
+		g.setColor(new Color(222,0,0));
+		g.fillRect(0,0,300,300);
+		
+		// Drawing elevators
+		g.setColor(new Color(0,0,0));
+		for (int k = 0; k < GUI.numElevators; k++)
+			g.drawLine(50*k, 0, 50*k, 100);
+	}
+}

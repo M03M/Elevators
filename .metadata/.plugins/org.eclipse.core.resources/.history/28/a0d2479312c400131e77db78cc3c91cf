@@ -1,0 +1,103 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class GUI extends JFrame
+{
+	// Dimensions
+	public static final int HEIGHT = 600;
+	public static final int WIDTH = 800;
+	
+	// TEMPORARY
+	public static int numElevators = 4; 
+	
+	public GUI()
+	{
+		// Setting JFrame properties
+		this.setSize(WIDTH, HEIGHT);
+		this.setName("Elevators");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setResizable(false);
+		
+		// Creating panels
+		JPanel pnl_main = new JPanel();
+		pnl_main.setSize(WIDTH, HEIGHT);
+		
+		JPanel pnl_elevators = new ElevatorPanel();
+		
+		JPanel pnl_display = new DisplayPanel();
+		
+		JPanel pnl_stats = new JPanel();
+		pnl_stats.setBackground(new Color(255,255,0));
+		pnl_stats.setPreferredSize(new Dimension(600,150));
+		
+		JPanel pnl_ui = new InputPanel();
+		
+		// Creating layout
+		pnl_main.setLayout(new BorderLayout());
+		
+		/* Adding panels to frame */
+		
+		pnl_main.add(pnl_ui, BorderLayout.LINE_END);
+		
+		// Temporary sub panel for holding other components
+		JPanel pnl_left = new JPanel();
+		pnl_left.setLayout(new BorderLayout());
+		pnl_left.add(pnl_elevators, BorderLayout.PAGE_START);
+		pnl_left.add(pnl_display, BorderLayout.CENTER);
+		pnl_left.add(pnl_stats, BorderLayout.PAGE_END);
+		
+		// Add sub panel
+		pnl_main.add(pnl_left);
+		
+		// Displaying JFrame
+		this.getContentPane().add(pnl_main);
+		this.setVisible(true);
+	}
+	
+	public static void main(String[]args)
+	{
+		// A pop up box prompting the user for parameters before running the 
+		// program.
+		JDialog jdbox = new JDialog();
+		jdbox.setName("Elevators!");
+		jdbox.setSize(200, 100);
+		jdbox.setLayout(new GridLayout(2,2));
+		jdbox.getContentPane().add(new JLabel("# Elevators: "));
+		jdbox.getContentPane().add(new JLabel("# Floors: "));
+		
+		JButton btn = new JButton("Start!");
+		btn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("HELLO");
+			}
+		});
+		
+		jdbox.getContentPane().add(btn);
+				
+		jdbox.getContentPane().add(new JButton("Random"));
+		//jdbox.add(new JText(2));
+		
+		
+		jdbox.setVisible(true);
+		
+		
+		GUI test = new GUI();
+	}
+}

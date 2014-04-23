@@ -1,0 +1,27 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+
+import javax.swing.JPanel;
+
+/** The ElevatorPanel is north on the GUI. It contains a list of sub panels that 
+  * displays information of each elevator (floor requests and direction). These
+  * sub panels and their images inside will be dynamically placed based on the 
+  * number of elevators and the number of floors respectively. */
+public class ElevatorPanel extends JPanel
+{
+	// Dimensions
+	private final int WIDTH  = (int)(GUI.WIDTH*0.75);
+	private final int HEIGHT = (int)(GUI.HEIGHT*0.2);
+	
+	public ElevatorPanel()
+	{
+
+		this.setBackground(new Color(0,255,0));
+		this.setPreferredSize(new Dimension(this.WIDTH,this.HEIGHT));
+		
+		this.setLayout(new GridLayout(1, GUI.numElevators));
+	}
+	
+	
+}
