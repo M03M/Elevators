@@ -158,8 +158,8 @@ public class GUI extends JFrame implements Runnable
 				
 				try {
 					Runner runner = new Runner();
-					runner.setNumElevators(Integer.parseInt(jtxtfld_elevators.getText()));
 					runner.setNumFloors(Integer.parseInt(jtxtfld_floors.getText()));
+					runner.setNumElevators(Integer.parseInt(jtxtfld_elevators.getText()));
 					
 					GUI test = new GUI(runner);
 					

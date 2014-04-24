@@ -1,9 +1,11 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 
 //Elevator class provides the attributes and methods of elevators in a building simulation
 public class Elevator
 {
 	private int dir;//The direction that the elevator is going (1 = up, 0 = still, -1 = down)
+	private int floorDir;//The floor that the elevator is going to
 	
 	private boolean justStopped;
 	
@@ -16,7 +18,7 @@ public class Elevator
 	private ArrayList<Person> passengers;//A list of the passengers in the elevator
 	
 	//private ArrayList<FloorRequest> floorRequests;//A list of the 'lit' floor buttons in the elevator
-	private ArrayList<Integer> floorRequests;
+	private HashSet<Integer> floorRequests;
 	
 	//Creates a new elevator object with default parameters and a set maximum floor
 	public Elevator()
@@ -25,7 +27,7 @@ public class Elevator
 		
 		maxOccupancy = DEFAULT_MAX_OCCUPANCY;
 		
-		floorRequests = new ArrayList<Integer>();
+		floorRequests = new HashSet<Integer>();
 		
 		passengers = new ArrayList<Person>();
 	}
@@ -34,6 +36,9 @@ public class Elevator
 		justStopped = false;
 		
 		currentFloor += dir;
+		if (currentFloor == floorDir) {
+			dir = 0;
+		}
 	}
 	
 	//Adds a new passenger to the elevator
@@ -41,15 +46,28 @@ public class Elevator
 	{
 		passengers.add(toAdd);
 		floorRequests.add(toAdd.getDestination());
+		if (dir < 0) {
+			if (toAdd.getDestination() < floorDir) {//wants to go down more than its already going down
+				setFloor(toAdd.getDestination());
+			}
+		} else if (dir > 0) {
+			if (toAdd.getDestination() > floorDir) {//wants to go down more than its already going down
+				setFloor(toAdd.getDestination());
+			}
+		}
 	}	
 	
 	//Sets the direction of the elevator
-	public void setDirection(int dir) {
-		this.dir = dir;
+	public void setFloor(int floorDir) {
+		this.floorDir = floorDir;
+		this.dir = (int) Math.signum(floorDir - currentFloor);
 	}
 	
 	//Returns the direction of the elevator
 	public int getDirection() {return dir;}
+	
+	//Returns the floor youre the elevator is going to
+	public int getFloorDirection() {return floorDir;}
 	
 	//Returns the number of additional passengers the elevator can hold
 	public int getAvailability(){return maxOccupancy - passengers.size();}
@@ -61,7 +79,7 @@ public class Elevator
 	public int getMaxOccupancy(){return maxOccupancy;}
 	
 	//Returns a list of all the lit buttons in the elevator
-	public ArrayList<Integer> getLitButtons()
+	public HashSet<Integer> getFloorRequests()
 	{
 		return floorRequests;
 	}
@@ -77,12 +95,8 @@ public class Elevator
 			if(passengers.get(i).getDestination() == currentFloor)
 			{
 				toReturn.add(passengers.remove(i));
+				i--;
 			}
-		}
-		
-		//Sets the direction to 0 only once when everyone leaves
-		if (passengers.size() == 0) {
-			dir = 0;
 		}
 		
 		return toReturn;
@@ -90,9 +104,6 @@ public class Elevator
 	
 	//Returns a list of the passengers on board
 	public ArrayList<Person> getPassenger(){return passengers;}
-	
-	//Returns a list of the stop requests that this elevator is responsible for
-	public ArrayList<Integer> getFloorRequests(){return floorRequests;}
 	
 	public void stop() {
 		justStopped = true;

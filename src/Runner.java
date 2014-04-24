@@ -66,7 +66,7 @@ public class Runner {
 		for (int i = 0; i < floorList.size(); i++) {
 			Floor curFloor = floorList.get(i);
 			
-			int numPeopleToAdd = (int) Math.ceil(Math.random() * 10);
+			int numPeopleToAdd = (int) Math.ceil(Math.random() * 2);
 			
 			for (int a = 0; a < numPeopleToAdd; a++) {
 				int floorGoingTo = (int) (Math.random() * (floorList.size() - 1));
@@ -74,7 +74,7 @@ public class Runner {
 					floorGoingTo++;
 				}
 				
-				curFloor.addPerson(new Person(floorGoingTo));
+				//curFloor.addPerson(new Person(floorGoingTo));
 			}
 		}
 		
@@ -85,9 +85,12 @@ public class Runner {
 				curElevator.tick();
 			} else {//can pick up/drop off more people
 				List<Person> exitPassengers = curElevator.ejectPassengers();
-				boolean elevatorHasGoal = curElevator.getPassenger().size() != 0;
-				List<Person> floorPeople = floorList.get(curElevator.getCurrentFloor()).removePassengers(curElevator.getDirection(), curElevator.getAvailability(), curElevator);
-				
+				List<Person> floorPeople = floorList.get(
+						curElevator.getCurrentFloor()).removePassengers(
+						curElevator.getDirection(),
+						curElevator.getAvailability() - exitPassengers.size(),
+						curElevator);
+
 				if (exitPassengers.size() != 0 || floorPeople.size() != 0) {//TODO could be better if another elevator had to pick up and drop off, check for that
 					curElevator.stop();
 					finishedPeople.addAll(curElevator.ejectPassengers());
@@ -106,15 +109,21 @@ public class Runner {
 			
 			if (curFloor.getUpRequest()) {
 				Elevator closest = getClosestElevator(1, i);
-				if (closest.getDirection() == 0) {
-					closest.setDirection((int) Math.signum(i - closest.getCurrentFloor()));
+				boolean goingInSameDir = closest.getDirection() == Math.signum(i - closest.getCurrentFloor());
+				boolean notAlreadyGoingToPass = Math.abs(i - closest.getCurrentFloor()) > Math.abs(closest.getFloorDirection() - closest.getCurrentFloor());
+				if (closest.getDirection() == 0 || (goingInSameDir && notAlreadyGoingToPass)) {
+					closest.setFloor(i);
+					curFloor.turnOffUpRequest();
 				}
 			}
 			
 			if (curFloor.getDownRequest()) {
 				Elevator closest = getClosestElevator(-1, i);
-				if (closest.getDirection() == 0) {
-					closest.setDirection((int) Math.signum(i - closest.getCurrentFloor()));
+				boolean goingInSameDir = closest.getDirection() == Math.signum(i - closest.getCurrentFloor());
+				boolean notAlreadyGoingToPass = Math.abs(i - closest.getCurrentFloor()) > Math.abs(closest.getFloorDirection() - closest.getCurrentFloor());
+				if (closest.getDirection() == 0 || (goingInSameDir && notAlreadyGoingToPass)) {
+					closest.setFloor(i);
+					curFloor.turnOffDownRequest();
 				}
 			}
 		}
@@ -152,7 +161,7 @@ public class Runner {
 			}
 			
 			// MODIFICATION: < became <= in order to fix a null pointer
-			if (curDistance <= distance) {
+			if (curDistance < distance || (curDistance == distance && curElevator.getDirection() != 0)) {
 				distance = curDistance;
 				closest = curElevator;
 			}
@@ -181,7 +190,11 @@ public class Runner {
 		List[] litButtons = new ArrayList[elevatorList.size()];
 		
 		for (int i = 0; i < litButtons.length; i++) {
-			litButtons[i] = elevatorList.get(i).getLitButtons();
+			List<Integer> buttons = new ArrayList<Integer>();
+			for (Integer floor : elevatorList.get(i).getFloorRequests()) {
+				buttons.add(floor);
+			}
+			litButtons[i] = buttons;
 		}
 		
 		return litButtons;
@@ -192,6 +205,24 @@ public class Runner {
 	 */
 	public static int getMaxFloors() {
 		return floorList.size();
+	}
+	
+	/*
+	 * @return returns the floor which is the farthest away
+	 */
+	public static int getMostExtremeFloor(int currentFloor, List<Person> people) {
+		int mostExtreme = people.get(0).getDestination();
+		int farthest = mostExtreme - currentFloor;
+		
+		for (int i = 1; i < people.size(); i++) {
+			int curFarthest = people.get(i).getDestination() - currentFloor;
+			if (curFarthest > farthest) {
+				farthest = curFarthest;
+				mostExtreme = people.get(i).getDestination();
+			}
+		}
+		
+		return mostExtreme;
 	}
 	
 	/*
@@ -214,7 +245,7 @@ public class Runner {
 		return elevatorList;
 	}
 	// TEMPORARY
-	public List<Floor> getFloorList()
+	public static List<Floor> getFloorList()
 	{
 		return floorList;
 	}

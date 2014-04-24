@@ -2,6 +2,7 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -105,9 +106,11 @@ public class DisplayPanel extends JPanel
 		// Floors
 		g.setColor(new Color(200,200,200));
 		g.setFont(GUI.font_bold_montserrat.deriveFont(20f));
+		List<Floor> floorList = Runner.getFloorList();
 		for (int k = 0; k < floorY.length; k++) {
 			g.fillRect(0, floorY[k], separation, 10);
 			g.drawString("FLOOR " + k, this.WIDTH/10, floorY[k]-5);
+			g.drawString("PEOPLE: " + floorList.get(k).getPeople().size(), this.WIDTH/10 + 100, floorY[k] - 5);
 		}
 	}
 }

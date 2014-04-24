@@ -54,8 +54,14 @@ public class Floor
 	//Return's the status of the 'down' button
 	public boolean getDownRequest(){return downRequest;}
 	
+	//Turns off the down request button
+	public void turnOffDownRequest() {downRequest = false;}
+	
 	//Return's the status of the 'up' button
 	public boolean getUpRequest(){return upRequest;}
+	
+	//Turns off the up request button
+	public void turnOffUpRequest() {upRequest = false;}
 	
 	//Returns the people that enter an elevator given it's direction and availability, and removes them from the floor
 	public ArrayList<Person> removePassengers(int dir, int availability, Elevator elev)
@@ -64,9 +70,12 @@ public class Floor
 		ArrayList<Person> toReturn = new ArrayList<Person>();
 		
 		//Doesnt have a real direction
-		if (elev.getPassenger().size() == 0) {
+		if (elev.getPassenger().size() == 0 && elev.getDirection() == 0) {
 			if (people.size() > 0) {
-				elev.setDirection((int) Math.signum(people.get(0).getDestination() - floorNumber));
+				int mostExtremeFloor = Runner.getMostExtremeFloor(floorNumber, people);
+				elev.setFloor(mostExtremeFloor);
+				dir = elev.getDirection();
+				
 			}
 		}
 
@@ -74,7 +83,7 @@ public class Floor
 		for(int i = 0; i < people.size(); i++)
 		{
 			//If the person is going in the direction of the elevator
-			if(Math.signum(people.get(i).getDestination() - floorNumber) == dir && toReturn.size() < availability)
+			if(Math.signum(people.get(i).getDestination() - floorNumber) == dir && toReturn.size() < availability)//TODO maybe <= availability
 			{
 				//Add the person to the list of people entering the elevator and remove them
 				toReturn.add(people.remove(i));
