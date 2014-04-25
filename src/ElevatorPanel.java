@@ -3,7 +3,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -40,7 +43,7 @@ public class ElevatorPanel extends JPanel
 		// Creating sub panels and adding them to layout
 		panels = new ElevatorSubPanel[elevators.size()];
 		for (int k = 0; k < panels.length; k++) {
-			panels[k] = new ElevatorSubPanel(elevators.get(k));
+			panels[k] = new ElevatorSubPanel(k);
 			add(panels[k]);
 		}
 	}
@@ -50,62 +53,38 @@ public class ElevatorPanel extends JPanel
 		for (ElevatorSubPanel e : panels)
 			e.update();
 	}
-	
-	public void paint(Graphics g)
-	{
-		super.paint(g);
-/*		// Space between panels
-		int pad = 5;
-		
-		// Sub panel width, same for all panels
-		int subW = panels[0].getWidth();
-		
-		// Background color
-		Color col_bg = new Color(34,47,64);
-		
-		// Setting up background 
-		g.setColor(col_bg);
-		g.fillRect(0, 0, panels[0].getWidth(), HEIGHT);
-		
-		g.setColor(new Color(250, 190, 70));
-		g.fillRoundRect(pad, pad, subW - (pad*2), HEIGHT - (pad*2), 25, 25);
-		
-		// Drawing up and down arrows
-		
-		
-		// Invoking
-		for (int k = 0; k < panels.length; k++)
-			panels[k].repaint();
-*/	}
 
 	/** An elevator subpanel utilizes the grid layout to position images. Each
 	 *  image is created as a button, their image updates upon repaint. This 
 	 *  way formatting is most accurate and adding functionality in the future 
 	 *  is already prepared. */
 	private class ElevatorSubPanel extends JPanel
-	{
-		private Elevator elevator;
-		
+	{		
 		// Buttons that represent elevator status
 		private JToggleButton [] btn_floors;
-		private JToggleButton btn_up, btn_down;
 		
-		public ElevatorSubPanel(Elevator elevator)
+		// Elevator number
+		int elevNum;
+		
+		public ElevatorSubPanel(int elevNum)
 		{
-			this.elevator = elevator;
-			
+			// Setting attributes
 			setBackground(GUI.col_orange_light);
 			
+			// Setting layout
+			setLayout(new GridBagLayout());
+			
+			this.elevNum = elevNum;
+			
 			// Creating components
-			JLabel lbl_elevNum = new JLabel("ELEVATOR #X");
-			lbl_elevNum.setBounds(100, 0, (int)(lbl_elevNum.getHeight()*2), lbl_elevNum.getHeight());
-			//lbl_elevNum.setPreferredSize(new Dimension(this.getWidth()-(PAD_H*3), 30));
+			JLabel lbl_elevNum = new JLabel("ELEVATOR #" + elevNum);
+			lbl_elevNum.setFont(GUI.font_bold_montserrat);
+			lbl_elevNum.setBackground(GUI.col_blue_dark);
 			
 			JPanel pnl_floorButtons = new JPanel();
-			pnl_floorButtons.setLayout(calculateDimensions());
+			GridLayout lyt_buttons = calculateDimensions();
+			pnl_floorButtons.setLayout(lyt_buttons);
 			
-			btn_up = new JToggleButton("UP");
-			btn_down = new JToggleButton("DOWN");
 			
 			// Filling array and adding buttons to layout 
 			btn_floors = new JToggleButton[Runner.getMaxFloors()];
@@ -113,21 +92,19 @@ public class ElevatorPanel extends JPanel
 				
 				// Creating button
 				btn_floors[k] = new JToggleButton(""+k);
-				
-				// Assigning images
-				//btn_floors[k].setSelectedIcon(new ImageIcon("res/btn_rect_on.png"));
-				//btn_floors[k].setIcon(new ImageIcon("res/btn_rect_off.png"));
+				btn_floors[k].setBackground(GUI.col_orange_dark);
+				btn_floors[k].setForeground(GUI.col_orange_light);
+				btn_floors[k].setFont(GUI.font_reg_montserrat.deriveFont(12f));
+				btn_floors[k].setEnabled(false);
 				
 				// Adding to layout
 				pnl_floorButtons.add(btn_floors[k]);
 			}
-			
 			// Adding components
-			add(lbl_elevNum, BorderLayout.PAGE_START);
-			add(btn_up, BorderLayout.LINE_START);
-			add(btn_down, BorderLayout.LINE_END);
-			add(pnl_floorButtons, BorderLayout.PAGE_END);
-			
+			add(lbl_elevNum, new GridBagConstraints( 0, 0, lyt_buttons.getColumns(), 1, 
+								0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+			add(pnl_floorButtons,  new GridBagConstraints( 0, 1, lyt_buttons.getColumns(), lyt_buttons.getRows(), 
+					0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 		}
 		
 		/* Calculating the appropriate dimensions for laying out floor 
@@ -154,12 +131,14 @@ public class ElevatorPanel extends JPanel
 		// Updates status of elevator
 		public void update()
 		{
-			btn_up.setSelected(elevator.getDirection() == 1);
-			btn_down.setSelected(elevator.getDirection() == -1);
+			// Resets buttons
+			for (int btnNum = 0; btnNum < btn_floors.length; btnNum++)
+				btn_floors[btnNum].setSelected(false);
 			
-			for (int k = 0; k < Runner.getMaxFloors(); k++)
-				btn_floors[k].setSelected(elevator.getFloorRequests().contains(k));
-			//System.out.println(elevator.getFloorRequests());
+			List<Integer> currentLit = Runner.getLitButtons()[elevNum];
+				
+			for (int btnNum = 0; btnNum < btn_floors.length; btnNum++)
+				btn_floors[btnNum].setSelected(currentLit.contains(btnNum));
 		}
 		
 		public void paint(Graphics g)
