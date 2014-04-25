@@ -74,7 +74,7 @@ public class Runner {
 					floorGoingTo++;
 				}
 				
-				//curFloor.addPerson(new Person(floorGoingTo));
+				curFloor.addPerson(new Person(floorGoingTo));
 			}
 		}
 		

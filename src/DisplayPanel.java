@@ -24,13 +24,10 @@ public class DisplayPanel extends JPanel
 	 * and the elevators meet */
 	private int separation;
 	
-	// Applicatoin logic
-	private Runner runner;
-	
-	public DisplayPanel(Runner runner)
+	public DisplayPanel()
 	{
 		// Modifying panel attributes
-		this.setBackground(new Color(255,0,0));
+		this.setBackground(GUI.col_blue_med);
 		this.setPreferredSize(new Dimension(this.WIDTH,this.HEIGHT));
 		
 		// Calculating floor y coordinates
@@ -40,7 +37,7 @@ public class DisplayPanel extends JPanel
 			floorY[i] = this.HEIGHT - floorH*i;
 		
 		// Determining elevator dimensions
-		if (runner.getElevatorList().size() <= 6)
+		if (Runner.getElevatorFloors().length <= 6)
 			elevW = 50;
 		else
 			elevW = 25;
@@ -48,9 +45,8 @@ public class DisplayPanel extends JPanel
 		elevH = (int)(floorH * 0.75);
 		
 		// Finding separation
-		separation = this.WIDTH - (int)(1.5*elevW*runner.getElevatorList().size()) - (int)(0.5*elevW);
+		separation = this.WIDTH - (int)(1.5*elevW*Runner.getElevatorFloors().length) - (int)(0.5*elevW);
 		
-		this.runner = runner;
 	}
 	
 	public void paint(Graphics g)
@@ -61,26 +57,26 @@ public class DisplayPanel extends JPanel
 		float fontSize = 20;
 		
 		// Painting backgrounds
-		g.setColor(new Color(35,50,65));
+		g.setColor(GUI.col_blue_med);
 		g.fillRect(0, 0, this.WIDTH, this.HEIGHT);
 		
 		// Painting floors
 		for (int k = 0; k < floorY.length; k++) {
-			g.setColor(new Color(66,88,115));
+			g.setColor(GUI.col_blue_light);
 			g.fillRect(0, floorY[k], this.WIDTH, 10);
 		}
 		
 		/** Painting elevator shafts */
-		for (int k = runner.getElevatorList().size()-1; k >= 0; k--) {
+		for (int k = Runner.getElevatorFloors().length-1; k >= 0; k--) {
 			// The starting x coordinate of the elevators - left side
-			int startX = this.WIDTH - (runner.getElevatorList().size() - k)*(int)(elevW*1.5);
+			int startX = this.WIDTH - (Runner.getElevatorFloors().length - k)*(int)(elevW*1.5);
 			
 			// Shaft itself
-			g.setColor(new Color(30,40,50));
+			g.setColor(GUI.col_blue_dark);
 			g.fill3DRect(startX, 0, elevW, this.HEIGHT, false);
 			
 			// Shaft details
-			g.setColor(new Color(30,40,50));
+			g.setColor(GUI.col_blue_dark);
 			g.setFont((GUI.font_reg_montserrat).deriveFont(fontSize));
 			for (int i = 0; i < this.HEIGHT; i += 60) {
 				
@@ -93,24 +89,31 @@ public class DisplayPanel extends JPanel
 			}
 			
 			// Elevators
-			g.setColor(new Color(250,190,70));
+			g.setColor(GUI.col_orange_light);
 			g.fill3DRect(startX, floorY[Runner.getElevatorFloors()[k]]-elevH, elevW, elevH, true);	
 		}
 		
 		/** Painting office background on remaining space. */
+		g.setFont(GUI.font_bold_montserrat.deriveFont(20f));
 		
 		// Walls
 		g.setColor(new Color(230,230,230));
 		g.fillRect(0, 0, separation, this.HEIGHT);
 		
-		// Floors
-		g.setColor(new Color(200,200,200));
-		g.setFont(GUI.font_bold_montserrat.deriveFont(20f));
 		List<Floor> floorList = Runner.getFloorList();
 		for (int k = 0; k < floorY.length; k++) {
+			
+			// Floors
+			g.setColor(new Color(200,200,200));
 			g.fillRect(0, floorY[k], separation, 10);
 			g.drawString("FLOOR " + k, this.WIDTH/10, floorY[k]-5);
+			
+			// People
 			g.drawString("PEOPLE: " + floorList.get(k).getPeople().size(), this.WIDTH/10 + 100, floorY[k] - 5);
+			g.setColor(GUI.col_orange_light);
+			
+			for (int r = 0; r < floorList.get(k).getPeople().size(); r++)
+				g.fillOval(separation-12*(r+1), floorY[k]-12, 10, 10);
 		}
 	}
 }

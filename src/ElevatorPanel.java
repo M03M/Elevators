@@ -94,7 +94,7 @@ public class ElevatorPanel extends JPanel
 		{
 			this.elevator = elevator;
 			
-			setBackground(new Color(250,190,70));
+			setBackground(GUI.col_orange_light);
 			
 			// Creating components
 			JLabel lbl_elevNum = new JLabel("ELEVATOR #X");
