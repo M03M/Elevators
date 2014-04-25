@@ -114,10 +114,12 @@ public class GUI extends JFrame implements Runnable
 	{
 		while (true) {
 			runner.tick();
+			Statistics.tick();
 			((ElevatorPanel)pnl_elevators).update('t');
 			
 			pnl_elevators.repaint();
 			pnl_display.repaint();
+			pnl_stats.repaint();
 			
 			try {
 				Thread.sleep(500);

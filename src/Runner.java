@@ -8,6 +8,8 @@ public class Runner {
 	private static List<Floor> floorList = new ArrayList<Floor>();
 	
 	private static List<Person> finishedPeople = new ArrayList<Person>();
+	private static long totalTime;
+	private static long totalPeople;
 	
 	/*
 	 * @param n sets the number of elevators
@@ -66,7 +68,7 @@ public class Runner {
 		for (int i = 0; i < floorList.size(); i++) {
 			Floor curFloor = floorList.get(i);
 			
-			int numPeopleToAdd = (int) Math.ceil(Math.random() * 2);
+			int numPeopleToAdd = (int) Math.ceil(Math.random() * Math.sqrt(elevatorList.size()));
 			
 			for (int a = 0; a < numPeopleToAdd; a++) {
 				int floorGoingTo = (int) (Math.random() * (floorList.size() - 1));
@@ -93,7 +95,14 @@ public class Runner {
 
 				if (exitPassengers.size() != 0 || floorPeople.size() != 0) {//TODO could be better if another elevator had to pick up and drop off, check for that
 					curElevator.stop();
-					finishedPeople.addAll(curElevator.ejectPassengers());
+					finishedPeople.addAll(exitPassengers);
+					
+					long curTime = System.currentTimeMillis();
+					for (Person p : exitPassengers) {
+						p.setDeath(curTime);
+						totalTime += p.getLife();
+						totalPeople++;
+					}
 					
 					for (Person p : floorPeople) {
 						curElevator.addPerson(p);
@@ -109,6 +118,7 @@ public class Runner {
 			
 			if (curFloor.getUpRequest()) {
 				Elevator closest = getClosestElevator(1, i);
+				
 				boolean goingInSameDir = closest.getDirection() == Math.signum(i - closest.getCurrentFloor());
 				boolean notAlreadyGoingToPass = Math.abs(i - closest.getCurrentFloor()) > Math.abs(closest.getFloorDirection() - closest.getCurrentFloor());
 				if (closest.getDirection() == 0 || (goingInSameDir && notAlreadyGoingToPass)) {
@@ -139,7 +149,7 @@ public class Runner {
 		Elevator closest = null;
 		
 		for (int i = 0; i < elevatorList.size(); i++) {
-			int curDistance = Integer.MAX_VALUE;
+			int curDistance = Integer.MAX_VALUE - 1;
 			Elevator curElevator = elevatorList.get(i);
 			int elevatorDir = curElevator.getDirection();
 			int elevatorFloor = curElevator.getCurrentFloor();
@@ -248,5 +258,17 @@ public class Runner {
 	public static List<Floor> getFloorList()
 	{
 		return floorList;
+	}
+	
+	public static List<Person> getFinishedPeople() {
+		return finishedPeople;
+	}
+	
+	public static long getTotalPeople() {
+		return totalPeople;
+	}
+	
+	public static long getTotalTime() {
+		return totalTime;
 	}
 }
