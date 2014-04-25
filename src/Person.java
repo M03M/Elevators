@@ -13,7 +13,7 @@ public class Person
 	{
 		this.destination = destination;
 		
-		birth = System.currentTimeMillis();
+		birth = System.nanoTime();
 	}
 	
 	//Returns the person's destination
