@@ -92,7 +92,7 @@ public class ElevatorPanel extends JPanel
 				
 				// Creating button
 				btn_floors[k] = new JToggleButton(""+k);
-				btn_floors[k].setBackground(GUI.col_orange_dark);
+				btn_floors[k].setBackground(new Color(20,20,10));//GUI.col_orange_dark);
 				btn_floors[k].setForeground(GUI.col_orange_light);
 				btn_floors[k].setFont(GUI.font_reg_montserrat.deriveFont(12f));
 				btn_floors[k].setEnabled(false);

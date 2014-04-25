@@ -42,7 +42,6 @@ public class GUI extends JFrame implements Runnable
 	public static final Color col_blue_dark = new Color(30,40,50);
 	public static final Color col_blue_med = new Color(35,50,65);
 	public static final Color col_blue_light = new Color(66,88,115);
-	public static final Color col_orange_dark = new Color(210,130,10);
 	public static final Color col_orange_light = new Color(250,190,70);
 	
 	public GUI(Runner runner)
@@ -115,10 +114,12 @@ public class GUI extends JFrame implements Runnable
 	{
 		while (true) {
 			runner.tick();
+			Statistics.tick();
 			((ElevatorPanel)pnl_elevators).update('t');
 			
 			pnl_elevators.repaint();
 			pnl_display.repaint();
+			pnl_stats.repaint();
 			
 			try {
 				Thread.sleep(500);
@@ -181,8 +182,8 @@ public class GUI extends JFrame implements Runnable
 					int randNumElevators = (int)(Math.random()*3) + 1;
 					
 					Runner runner = new Runner();
-					runner.setNumElevators(randNumElevators);
-					runner.setNumFloors(randNumFloors);
+					runner.setNumElevators(randNumFloors);
+					runner.setNumFloors(randNumElevators);
 					
 					GUI test = new GUI(runner);
 					
